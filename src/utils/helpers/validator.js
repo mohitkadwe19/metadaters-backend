@@ -97,6 +97,15 @@ module.exports = function validators(array) {
           validationArray.push({ fieldName: field.fieldName, message: `${field.fieldName} should be a boolean.` });
         }
         break;
+      case "mobile":
+        if (field.value === null || field.value === undefined || field.value === "") {
+          validationArray.push({ fieldName: field.fieldName, message: `Please enter ${field.fieldName} ` });
+          break;
+        }
+        if (!validator.isMobilePhone(field.value)) {
+          validationArray.push({ fieldName: field.fieldName, message: `${field.fieldName} is invalid.` });
+          break;
+        }
     };
   });
   return validationArray;

@@ -2,6 +2,13 @@ const vehicleServices = require('../../services/vehicleServices');
 const validators = require("../../utils/helpers/validator");
 
 
+// twilio credentials
+const accountSid = 'AC5dff5d59dadfd76c9ec91227c0eddbc6';
+const authToken = 'f0a4632d7de4d46b52873bcd983c29da';
+
+const twilio = require("twilio")(accountSid, authToken);
+
+
 // update vehicle warning PUT Method
 const updateVehicleWarning = async (request, response) => {
   try {
@@ -39,6 +46,24 @@ const updateVehicleWarning = async (request, response) => {
     }
 
     if (IsVehicleExist.warning >= 5) {
+
+      // for sending sms
+      twilio.messages
+        .create({
+          from: "+12673991126",
+          to: `+91${IsVehicleExist.mobileNumber}`,
+          body: "This is general reminder for your vehicle .Please clear your vehicle penalties.",
+        })
+        .then(function (res) { console.log("message has sent!") })
+        .catch(function (err) {
+          response.status(400).json({
+            status: "FAILED",
+            message: err.message,
+          });
+          return;
+        });
+
+
       response.status(200).json({
         status: "FAILED",
         message: "Vehicle has been blocked.",
