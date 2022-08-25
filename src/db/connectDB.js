@@ -35,14 +35,14 @@ module.exports.connectDB = async () => {
 
 module.exports.get = () => {
   if (!connection) {
-    throw new Error('Call Connect First...');
+    throw new Error('Wait for connection to DB');
   }
   return connection;
 }
 
 module.exports.close = () => {
   if (!connection) {
-    throw new Error('Call Connect First...');
+    throw new Error('Wait for connection to DB');
   }
   MongoDBClient.close();
   return;
