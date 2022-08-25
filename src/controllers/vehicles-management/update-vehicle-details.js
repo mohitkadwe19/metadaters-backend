@@ -1,22 +1,26 @@
 const vehicleServices = require('../../services/vehicleServices');
 const validators = require("../../utils/helpers/validator");
 
+// update vehicle details PATCH Method
 
-// Create vehicle POST Method
-const createVehicle = async (request, response) => {
+const updateVehicleDetails = async (request, response) => {
   try {
 
+    const id = request.body.id;
+    const warning = Number(request.body.warning);
     const number = request.body.number;
-    const location = request.body.location;
-    const warning = 0;
-    const authority = request.body.authority;
     const mobileNumber = request.body.mobileNumber;
+    const authority = request.body.authority;
+    const location = request.body.location;
+
 
     const validatorsArray = [
+      { fieldName: "id", value: id, type: "string", maxLength: 100, minLength: 20 },
       { fieldName: "number", value: number, type: "string", maxLength: 100, minLength: 8 },
       { fieldName: "location", value: location, type: "string", maxLength: 100, minLength: 3 },
       { fieldName: "authority", value: authority, type: "string", maxLength: 100, minLength: 3 },
       { fieldName: "mobileNumber", value: mobileNumber, type: "mobile", maxLength: 10, minLength: 10 },
+      { fieldName: "warning", value: warning, type: "number", maxLength: 100, minLength: 1 },
     ];
 
 
@@ -33,39 +37,30 @@ const createVehicle = async (request, response) => {
     };
 
     //check vehicle exist or not
-    const IsVehicleExist = await vehicleServices.vehicleByNumber(number);
+    const IsVehicleExist = await vehicleServices.vehicleById(id);
 
-    if (!!IsVehicleExist) {
+    if (!!IsVehicleExist === false) {
       response.status(200).json({
         status: "FAILED",
-        message: "Vehicle already Exist",
+        message: "Vehicle is not Exist",
       });
       return;
     }
 
-    // Vehicle Object
-    vehicleDetails = {
-      number,
-      location,
-      authority,
-      warning,
-      mobileNumber,
-      creationDate: new Date()
-    }
+    // update Vehicle details to database
+    const result = await vehicleServices.updateVehicleDetails(id, number, location, authority, mobileNumber, warning);
 
-    // save Vehicle details to database
-    const result = await vehicleServices.createVehicle(vehicleDetails);
+    if (result.acknowledged === true && result.modifiedCount > 0) {
 
-    if (result.acknowledged === true) {
       response.status(200).json({
         status: "SUCCESS",
-        message: 'Vehicle Registered Successfully',
+        message: 'Vehicle updated Successfully',
       });
       return;
     } else {
       response.status(200).json({
         status: "FAILED",
-        message: 'Vehicle Registration Failed',
+        message: 'Failed to update vehicle warning',
       });
       return;
     }
@@ -81,4 +76,4 @@ const createVehicle = async (request, response) => {
 }
 
 
-module.exports = createVehicle;
+module.exports = updateVehicleDetails;

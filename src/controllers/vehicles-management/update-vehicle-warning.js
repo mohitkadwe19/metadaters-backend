@@ -4,7 +4,7 @@ const validators = require("../../utils/helpers/validator");
 
 // twilio credentials
 const accountSid = 'AC5dff5d59dadfd76c9ec91227c0eddbc6';
-const authToken = 'f0a4632d7de4d46b52873bcd983c29da';
+const authToken = 'f63f7250f0a2921feface36cc73bccda';
 
 const twilio = require("twilio")(accountSid, authToken);
 
@@ -45,18 +45,19 @@ const updateVehicleWarning = async (request, response) => {
       return;
     }
 
+
     if (IsVehicleExist.warning >= 5) {
 
       // for sending sms
       twilio.messages
         .create({
           from: "+12673991126",
-          to: `+91${IsVehicleExist.mobileNumber}`,
+          to: '+91' + IsVehicleExist.mobileNumber,
           body: "This is general reminder for your vehicle .Please clear your vehicle penalties.",
         })
         .then(function (res) { console.log("message has sent!") })
         .catch(function (err) {
-          response.status(400).json({
+          response.status(200).json({
             status: "FAILED",
             message: err.message,
           });
@@ -76,7 +77,25 @@ const updateVehicleWarning = async (request, response) => {
     // update Vehicle details to database
     const result = await vehicleServices.updateVehicleWarning(id, increaseWarning);
 
+    // for sending sms
+    twilio.messages
+      .create({
+        from: "+12673991126",
+        to: '+91' + IsVehicleExist.mobileNumber,
+        body: `[WARNING] : Your vehicle ${IsVehicleExist.number} seems to be overloaded. Your warnings: ${IsVehicleExist.warning}.`,
+      })
+      .then(function (res) { console.log("message has sent!") })
+      .catch(function (err) {
+        response.status(200).json({
+          status: "FAILED",
+          message: err.message,
+        });
+        return;
+      });
+
     if (result.acknowledged === true && result.modifiedCount > 0) {
+
+
       response.status(200).json({
         status: "SUCCESS",
         message: 'Vehicle updated Successfully',
