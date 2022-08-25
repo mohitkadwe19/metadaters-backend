@@ -47,51 +47,14 @@ const vehicleByNumber = async (number) => {
 };
 
 // update vehicle warning service
-const updateVehicleWarning = async (Id, warning) => {
+const updateVehicleWarning = async (Id, warning, updationDate) => {
   try {
-    const result = await db.get().collection('vehicles').aggregate(
-      [
-        {
-          '$match': {
-            '_id': new ObjectId(Id)
-          }
-        }, {
-          '$set': {
-            'warning': warning,
-            'updationDate': new Date()
-          }
-        }, {
-          '$addFields': {
-            'truckTransaction': {
-              '$slice': [
-                '$truckTransaction', {
-                  '$cond': {
-                    'if': {
-                      '$gt': [
-                        {
-                          '$size': '$truckTransaction'
-                        }, 1
-                      ]
-                    },
-                    'then': {
-                      '$subtract': [
-                        0, warning
-                      ]
-                    },
-                    'else': {
-                      '$subtract': [
-                        0, 5
-                      ]
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ]
-    )
-    // updateOne({ _id: ObjectId(Id) }, { $set: { warning: warning, updationDate: new Date() }, $pop: { truckTransaction: 2 } });
+    const updatedData = {
+      weight: 993,
+      creationDate: updationDate,
+      warning: true
+    }
+    const result = await db.get().collection('vehicles').updateOne({ _id: ObjectId(Id) }, { $set: { warning: warning, updationDate: updationDate }, $push: { truckTransaction: updatedData } });
     return result;
   }
   catch (error) {
@@ -137,7 +100,53 @@ const getVehicleWarningDetailsForGraph = async () => {
 // update vehicle details service
 const updateVehicleDetails = async (id, number, location, authority, mobileNumber, warning) => {
   try {
-    const result = await db.get().collection('vehicles').updateMany({ _id: ObjectId(id) }, { $set: { number: number, location: location, authority: authority, mobileNumber: mobileNumber, warning: warning } });
+    const result = await db.get().collection('vehicles').aggregate(
+      [
+        {
+          '$match': {
+            '_id': new ObjectId(id)
+          }
+        }, {
+          '$set': {
+            'warning': warning,
+            'updationDate': new Date(),
+            'location': location,
+            'authority': authority,
+            'number': number,
+            'mobileNumber': mobileNumber,
+          }
+        }, {
+          '$addFields': {
+            'truckTransaction': {
+              '$slice': [
+                '$truckTransaction', {
+                  '$cond': {
+                    'if': {
+                      '$gt': [
+                        {
+                          '$size': '$truckTransaction'
+                        }, 1
+                      ]
+                    },
+                    'then': {
+                      '$subtract': [
+                        0, warning
+                      ]
+                    },
+                    'else': {
+                      '$subtract': [
+                        0, 5
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    )
+    // updateMany({ _id: ObjectId(id) }, { $set: { number: number, location: location, authority: authority, mobileNumber: mobileNumber, warning: warning } });
     return result;
   }
   catch (error) {
