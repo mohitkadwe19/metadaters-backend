@@ -38,6 +38,14 @@ const updateVehicleWarning = async (request, response) => {
       return;
     }
 
+    if (IsVehicleExist.warning >= 5) {
+      response.status(200).json({
+        status: "FAILED",
+        message: "Vehicle has been blocked.",
+      });
+      return;
+    }
+
     const increaseWarning = IsVehicleExist.warning + warning
 
     // update Vehicle details to database

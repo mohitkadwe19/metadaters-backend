@@ -19,19 +19,31 @@ const options = {
 // Create a new MongoClient
 const MongoDBClient = new MongoClient(uri, options);
 
-module.exports.connectDB = async () => {
-  try {
-    const client = await MongoDBClient.connect();
-    const db = client.db("Metadaters");
-    console.log("Connected to MongoDB successfully 🟢");
+// module.exports.connectDB = async () => {
+//   try {
+//     const client = await MongoDBClient.connect();
+//     const db = client.db("Metadaters");
+//     console.log("Connected to MongoDB successfully 🟢");
+//     connection = db;
+//     return db;
+//   } catch (err) {
+//     console.log(err);
+//     MongoDBClient.close();
+//     return null;
+//   }
+// };
+
+module.exports.connectDB = () => new Promise((resolve, reject) => {
+  MongoDBClient.connect(function (err, client) {
+    if (err) { reject(err); return; };
+    const db = client.db('Metadaters');
+    resolve(db);
     connection = db;
-    return db;
-  } catch (err) {
-    console.log(err);
-    MongoDBClient.close();
-    return null;
-  }
-};
+    console.log("Connected to MongoDB successfully 🟢");
+  });
+  return connection;
+});
+
 
 module.exports.get = () => {
   if (!connection) {

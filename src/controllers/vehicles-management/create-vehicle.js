@@ -8,14 +8,13 @@ const createVehicle = async (request, response) => {
 
     const number = request.body.number;
     const location = request.body.location;
-    const warning = Number(request.body.warning);
-    const driver = request.body.driver;
+    const warning = 0;
+    const authority = request.body.authority;
 
     const validatorsArray = [
       { fieldName: "number", value: number, type: "string", maxLength: 100, minLength: 8 },
-      { fieldName: "location", value: location, type: "string", maxLength: 100, minLength: 8 },
-      { fieldName: "driver", value: driver, type: "string", maxLength: 100, minLength: 8 },
-      { fieldName: "warning", value: warning, type: "number", maxLength: 5, minLength: 1 },
+      { fieldName: "location", value: location, type: "string", maxLength: 100, minLength: 3 },
+      { fieldName: "authority", value: authority, type: "string", maxLength: 100, minLength: 3 },
     ];
 
 
@@ -34,7 +33,7 @@ const createVehicle = async (request, response) => {
     //check vehicle exist or not
     const IsVehicleExist = await vehicleServices.vehicleByNumber(number);
 
-    if (IsVehicleExist) {
+    if (!!IsVehicleExist) {
       response.status(200).json({
         status: "FAILED",
         message: "Vehicle already Exist",
@@ -46,12 +45,13 @@ const createVehicle = async (request, response) => {
     vehicleDetails = {
       number,
       location,
-      driver,
+      authority,
       warning
     }
 
     // save Vehicle details to database
     const result = await vehicleServices.createVehicle(vehicleDetails);
+    console.log(result);
     if (result.acknowledged === true) {
       response.status(200).json({
         status: "SUCCESS",

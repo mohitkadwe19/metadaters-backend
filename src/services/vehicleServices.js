@@ -5,6 +5,7 @@ const { ObjectId } = require('mongodb');
 const createVehicle = async (vehicleDetails) => {
   try {
     const result = await db.get().collection('vehicles').insertOne(vehicleDetails);
+    console.log(result);
     return result;
   }
   catch (error) {

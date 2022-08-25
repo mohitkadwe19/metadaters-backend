@@ -48,6 +48,7 @@ module.exports = function validators(array) {
           validationArray.push({ fieldName: field.fieldName, message: `${field.fieldName} format is invalid.` });
         }
         break;
+
       case "number":
         let totalDigitsInNumber = 0;
         let numberCopy = field.value;
