@@ -10,7 +10,7 @@ const updateVehicleWarning = async (request, response) => {
     const warning = Number(request.body.warning);
 
     const validatorsArray = [
-      { fieldName: "id", value: number, type: "string", maxLength: 100, minLength: 20 },
+      { fieldName: "id", value: id, type: "string", maxLength: 100, minLength: 20 },
       { fieldName: "warning", value: warning, type: "number", maxLength: 100, minLength: 1 },
     ];
 
@@ -38,8 +38,10 @@ const updateVehicleWarning = async (request, response) => {
       return;
     }
 
+    const increaseWarning = IsVehicleExist.warning + warning
+
     // update Vehicle details to database
-    const result = await vehicleServices.updateVehicleWarning(id, warning);
+    const result = await vehicleServices.updateVehicleWarning(id, increaseWarning);
 
     if (result.acknowledged === true && result.modifiedCount > 0) {
       response.status(200).json({
