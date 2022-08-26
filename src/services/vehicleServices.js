@@ -154,6 +154,29 @@ const updateVehicleDetails = async (id, number, location, authority, mobileNumbe
   }
 }
 
+// check truckTransaction data service
+const checkTruckTransactionData = async (Id, warning, updationDate, weight) => {
+  try {
+    console.log(typeof weight);
+    const result = await db.get().collection('vehicles').aggregate(
+      [
+        {
+          '$match': {
+            '_id': Id,
+            'truckTransaction.weight': weight,
+            'truckTransaction.creationDate': updationDate,
+            'truckTransaction.warning': warning
+          }
+        }
+      ]
+    ).toArray();
+    return result;
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   createVehicle,
   getVehicles,
@@ -161,5 +184,6 @@ module.exports = {
   vehicleByNumber,
   updateVehicleWarning,
   getVehicleWarningDetailsForGraph,
-  updateVehicleDetails
+  updateVehicleDetails,
+  checkTruckTransactionData
 }
