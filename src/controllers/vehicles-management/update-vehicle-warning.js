@@ -15,7 +15,7 @@ const updateVehicleWarning = async (request, response) => {
 
     const number = request.body.number;
     const warning = request.body.warning;
-    const updationDate = request.body.updationDate;
+    const updationDate = new Date(request.body.updationDate);
     const weight = Number(request.body.weight);
 
     const validatorsArray = [
@@ -53,20 +53,20 @@ const updateVehicleWarning = async (request, response) => {
     if (IsVehicleExist.warning >= 5) {
 
       // for sending sms
-      // twilio.messages
-      //   .create({
-      //     from: "+12673991126",
-      //     to: '+91' + IsVehicleExist.mobileNumber,
-      //     body: "This is general reminder for your vehicle .Please clear your vehicle penalties.",
-      //   })
-      //   .then(function (res) { console.log("message has sent!") })
-      //   .catch(function (err) {
-      //     response.status(200).json({
-      //       status: "FAILED",
-      //       message: err.message,
-      //     });
-      //     return;
-      //   })
+      twilio.messages
+        .create({
+          from: "+12673991126",
+          to: '+91' + IsVehicleExist.mobileNumber,
+          body: "This is general reminder for your vehicle .Please clear your vehicle penalties.",
+        })
+        .then(function (res) { console.log("message has sent!") })
+        .catch(function (err) {
+          response.status(200).json({
+            status: "FAILED",
+            message: err.message,
+          });
+          return;
+        })
 
       // response.status(200).json({
       //   status: "FAILED",
@@ -81,20 +81,20 @@ const updateVehicleWarning = async (request, response) => {
     const result = await vehicleServices.updateVehicleWarning(IsVehicleExist._id, increasedWarning, updationDate, weight);
 
     // for sending sms
-    // twilio.messages
-    //   .create({
-    //     from: "+12673991126",
-    //     to: '+91' + IsVehicleExist.mobileNumber,
-    //     body: `[WARNING] : Your vehicle ${IsVehicleExist.number} seems to be overloaded. Your warnings: ${IsVehicleExist.warning}.`,
-    //   })
-    //   .then(function (res) { console.log("message has sent!") })
-    //   .catch(function (err) {
-    //     response.status(200).json({
-    //       status: "FAILED",
-    //       message: err.message,
-    //     });
-    //     return;
-    //   });
+    twilio.messages
+      .create({
+        from: "+12673991126",
+        to: '+91' + IsVehicleExist.mobileNumber,
+        body: `[WARNING] : Your vehicle ${IsVehicleExist.number} seems to be overloaded. Your warnings: ${IsVehicleExist.warning}.`,
+      })
+      .then(function (res) { console.log("message has sent!") })
+      .catch(function (err) {
+        response.status(200).json({
+          status: "FAILED",
+          message: err.message,
+        });
+        return;
+      });
 
     if (result.acknowledged === true && result.modifiedCount > 0) {
       response.status(200).json({
