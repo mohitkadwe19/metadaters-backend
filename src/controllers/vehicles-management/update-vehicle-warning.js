@@ -57,15 +57,15 @@ const updateVehicleWarning = async (request, response) => {
 
     // check truck transaction data is already exists or not
 
-    const TruckTransactionExist = await vehicleServices.checkTruckTransactionData(IsVehicleExist._id, true, updationDate, weight);
+    // const TruckTransactionExist = await vehicleServices.checkTruckTransactionData(IsVehicleExist._id, true, updationDate, weight);
 
-    if (!!TruckTransactionExist) {
-      response.status(200).json({
-        status: "FAILED",
-        message: "Truck Transaction is already Exist",
-      });
-      return;
-    }
+    // if (!!TruckTransactionExist) {
+    //   response.status(200).json({
+    //     status: "FAILED",
+    //     message: "Truck Transaction is already Exist",
+    //   });
+    //   return;
+    // }
 
     if (IsVehicleExist.warning >= 4) {
 
