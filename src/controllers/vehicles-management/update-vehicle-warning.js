@@ -13,13 +13,16 @@ const twilio = require("twilio")(accountSid, authToken);
 const updateVehicleWarning = async (request, response) => {
   try {
 
-    const id = request.body.id;
-    const warning = Number(request.body.warning);
-    const updationDate = new Date();
+    const number = request.body.number;
+    const warning = request.body.warning;
+    const updationDate = request.body.updationDate;
+    const weight = Number(request.body.weight);
 
     const validatorsArray = [
-      { fieldName: "id", value: id, type: "string", maxLength: 100, minLength: 20 },
-      { fieldName: "warning", value: warning, type: "number", maxLength: 100, minLength: 1 },
+      { fieldName: "number", value: number, type: "string", maxLength: 100, minLength: 8 },
+      { fieldName: "warning", value: warning, type: "boolean", maxLength: 5, minLength: 4 },
+      { fieldName: "updationDate", value: updationDate, type: "date", maxLength: 5, minLength: 4 },
+      { fieldName: "weight", value: weight, type: "number", maxLength: 1000, minLength: 1 },
     ];
 
 
@@ -36,7 +39,7 @@ const updateVehicleWarning = async (request, response) => {
     };
 
     //check vehicle exist or not
-    const IsVehicleExist = await vehicleServices.vehicleById(id);
+    const IsVehicleExist = await vehicleServices.vehicleByNumber(number);
 
     if (!!IsVehicleExist === false) {
       response.status(200).json({
@@ -50,20 +53,20 @@ const updateVehicleWarning = async (request, response) => {
     if (IsVehicleExist.warning >= 5) {
 
       // for sending sms
-      // twilio.messages
-      //   .create({
-      //     from: "+12673991126",
-      //     to: '+91' + IsVehicleExist.mobileNumber,
-      //     body: "This is general reminder for your vehicle .Please clear your vehicle penalties.",
-      //   })
-      //   .then(function (res) { console.log("message has sent!") })
-      //   .catch(function (err) {
-      //     response.status(200).json({
-      //       status: "FAILED",
-      //       message: err.message,
-      //     });
-      //     return;
-      //   });
+      twilio.messages
+        .create({
+          from: "+12673991126",
+          to: '+91' + IsVehicleExist.mobileNumber,
+          body: "This is general reminder for your vehicle .Please clear your vehicle penalties.",
+        })
+        .then(function (res) { console.log("message has sent!") })
+        .catch(function (err) {
+          response.status(200).json({
+            status: "FAILED",
+            message: err.message,
+          });
+          return;
+        })
 
       // response.status(200).json({
       //   status: "FAILED",
@@ -72,26 +75,26 @@ const updateVehicleWarning = async (request, response) => {
       // return;
     }
 
-    const increaseWarning = IsVehicleExist.warning + warning
+    const increasedWarning = IsVehicleExist.warning + warning
 
     // update Vehicle details to database
-    const result = await vehicleServices.updateVehicleWarning(id, increaseWarning, updationDate);
+    const result = await vehicleServices.updateVehicleWarning(IsVehicleExist._id, increasedWarning, updationDate, weight);
 
     // for sending sms
-    // twilio.messages
-    //   .create({
-    //     from: "+12673991126",
-    //     to: '+91' + IsVehicleExist.mobileNumber,
-    //     body: `[WARNING] : Your vehicle ${IsVehicleExist.number} seems to be overloaded. Your warnings: ${IsVehicleExist.warning}.`,
-    //   })
-    //   .then(function (res) { console.log("message has sent!") })
-    //   .catch(function (err) {
-    //     response.status(200).json({
-    //       status: "FAILED",
-    //       message: err.message,
-    //     });
-    //     return;
-    //   });
+    twilio.messages
+      .create({
+        from: "+12673991126",
+        to: '+91' + IsVehicleExist.mobileNumber,
+        body: `[WARNING] : Your vehicle ${IsVehicleExist.number} seems to be overloaded. Your warnings: ${IsVehicleExist.warning}.`,
+      })
+      .then(function (res) { console.log("message has sent!") })
+      .catch(function (err) {
+        response.status(200).json({
+          status: "FAILED",
+          message: err.message,
+        });
+        return;
+      });
 
     if (result.acknowledged === true && result.modifiedCount > 0) {
       response.status(200).json({

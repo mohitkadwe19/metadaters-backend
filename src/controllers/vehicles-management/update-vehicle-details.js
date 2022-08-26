@@ -13,6 +13,7 @@ const updateVehicleDetails = async (request, response) => {
     const authority = request.body.authority;
     const location = request.body.location;
 
+    console.log(request.body);
 
     const validatorsArray = [
       { fieldName: "id", value: id, type: "string", maxLength: 100, minLength: 20 },
@@ -20,7 +21,7 @@ const updateVehicleDetails = async (request, response) => {
       { fieldName: "location", value: location, type: "string", maxLength: 100, minLength: 3 },
       { fieldName: "authority", value: authority, type: "string", maxLength: 100, minLength: 3 },
       { fieldName: "mobileNumber", value: mobileNumber, type: "mobile", maxLength: 10, minLength: 10 },
-      { fieldName: "warning", value: warning, type: "number", maxLength: 100, minLength: 1 },
+      { fieldName: "warning", value: warning, type: "number", maxLength: 100, minLength: 0 },
     ];
 
 
@@ -49,6 +50,8 @@ const updateVehicleDetails = async (request, response) => {
 
     // update Vehicle details to database
     const result = await vehicleServices.updateVehicleDetails(id, number, location, authority, mobileNumber, warning);
+
+    console.log(result);
 
     if (result.acknowledged === true && result.modifiedCount > 0) {
 

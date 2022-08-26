@@ -106,6 +106,17 @@ module.exports = function validators(array) {
           validationArray.push({ fieldName: field.fieldName, message: `${field.fieldName} is invalid.` });
           break;
         }
+        break;
+      case "date":
+        if (field.value === null || field.value === undefined || field.value === "") {
+          validationArray.push({ fieldName: field.fieldName, message: `Please enter ${field.fieldName} ` });
+          break;
+        }
+        if (!validator.isDate(field.value)) {
+          validationArray.push({ fieldName: field.fieldName, message: `${field.fieldName} is invalid.` });
+          break;
+        }
+        break;
     };
   });
   return validationArray;

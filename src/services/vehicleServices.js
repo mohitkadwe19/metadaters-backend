@@ -47,10 +47,10 @@ const vehicleByNumber = async (number) => {
 };
 
 // update vehicle warning service
-const updateVehicleWarning = async (Id, warning, updationDate) => {
+const updateVehicleWarning = async (Id, warning, updationDate, weight) => {
   try {
     const updatedData = {
-      weight: 993,
+      weight: weight,
       creationDate: updationDate,
       warning: true
     }
@@ -117,7 +117,7 @@ const updateVehicleDetails = async (id, number, location, authority, mobileNumbe
           }
         }, {
           '$addFields': {
-            'truckTransaction': {
+            'truckTransactions': {
               '$slice': [
                 '$truckTransaction', {
                   '$cond': {
@@ -135,7 +135,7 @@ const updateVehicleDetails = async (id, number, location, authority, mobileNumbe
                     },
                     'else': {
                       '$subtract': [
-                        0, 5
+                        0, 1
                       ]
                     }
                   }

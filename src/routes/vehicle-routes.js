@@ -7,6 +7,8 @@ const getVehicles = require('../controllers/vehicles-management/get-vehicles');
 const updateVehicleWarning = require('../controllers/vehicles-management/update-vehicle-warning');
 const getVehicleWarningDetailsForGraph = require('../controllers/vehicles-management/get-vehicle-warning-details-for-graph');
 const updateVehicleDetails = require('../controllers/vehicles-management/update-vehicle-details');
+const getVehicleDetailsById = require('../controllers/vehicles-management/get-vehicle-details-by-id');
+
 
 // create vehicle  POST REQUEST
 router.post('/create-vehicle', ValidateAdminJwtMiddleware, createVehicle);
@@ -23,6 +25,8 @@ router.get('/get-vehicle-warning-details-for-graph', ValidateAdminJwtMiddleware,
 // update vehicle warning details PATCH REQUEST
 router.patch('/update-vehicle-details', ValidateAdminJwtMiddleware, updateVehicleDetails);
 
+// get vehicle details by id POST REQUEST
+router.post('/get-vehicle-details-by-id', ValidateAdminJwtMiddleware, getVehicleDetailsById);
 
 
 module.exports = router
