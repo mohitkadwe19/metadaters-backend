@@ -16,8 +16,8 @@ router.post('/create-vehicle', ValidateAdminJwtMiddleware, createVehicle);
 // get vehicles  GET REQUEST
 router.get('/get-vehicles', ValidateAdminJwtMiddleware, getVehicles);
 
-// update vehicle  PUT REQUEST
-router.put('/update-vehicle-warning', ValidateAdminJwtMiddleware, updateVehicleWarning);
+// update vehicle  PATCH REQUEST
+router.patch('/update-vehicle-warning', ValidateAdminJwtMiddleware, updateVehicleWarning);
 
 // get vehicle warning details GET REQUEST
 router.get('/get-vehicle-warning-details-for-graph', ValidateAdminJwtMiddleware, getVehicleWarningDetailsForGraph);
